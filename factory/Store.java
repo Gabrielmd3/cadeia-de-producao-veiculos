@@ -20,6 +20,7 @@ class StoreClient {
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
             int storeBeltPosition = inventory.size();
+            System.out.println("STORE: " + storeBeltPosition);
             out.writeObject("REQUEST_VEHICLE " + storeName + " " + storeBeltPosition);
             Vehicle vehicle = (Vehicle) in.readObject();
             inventory.put(vehicle);

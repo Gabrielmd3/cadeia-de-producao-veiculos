@@ -2,7 +2,6 @@ package factory;
 import java.io.*;
 import java.net.*;
 import java.util.concurrent.*;
-import java.util.Random;
 
 class FactoryServer {
     private static final int MAX_PARTS = 500;
@@ -14,7 +13,6 @@ class FactoryServer {
     private Semaphore partsSemaphore = new Semaphore(MAX_PARTS);
     private Semaphore[] tools = new Semaphore[NUM_STATIONS];
     private BlockingQueue<Vehicle> belt = new ArrayBlockingQueue<>(MAX_BELT_CAPACITY);
-    private Random random = new Random();
 
     public FactoryServer() {
         for (int i = 0; i < NUM_STATIONS; i++) {
@@ -80,7 +78,8 @@ class FactoryServer {
             String request = (String) in.readObject();
             if (request.startsWith("REQUEST_VEHICLE")) {
                 String storeName = request.split(" ")[1];
-                int storeBeltPosition = Integer.parseInt(request.split(" ")[2]);
+                int storeBeltPosition = Integer.parseInt(request.split(" ")[3]);
+                System.out.println("FACTORY: " + storeBeltPosition);
                 Vehicle vehicle = sellVehicle(storeName, storeBeltPosition);
                 out.writeObject(vehicle);
                 System.out.println("Vehicle sent to " + storeName + ": " + vehicle);
