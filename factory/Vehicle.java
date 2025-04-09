@@ -11,6 +11,7 @@ class Vehicle implements Serializable {
     private final int stationId;
     private final int workerId;
     private final int beltPosition;
+    private String store;
 
     public Vehicle(int stationId, int workerId, int beltPosition) {
         this.id = idCounter++;
@@ -19,6 +20,11 @@ class Vehicle implements Serializable {
         this.stationId = stationId;
         this.workerId = workerId;
         this.beltPosition = beltPosition;
+        this.store = "";
+    }
+
+    public void setStore(String store) {
+        this.store = store;
     }
 
     private String getRandomColor() {
@@ -37,6 +43,6 @@ class Vehicle implements Serializable {
 
     @Override
     public String toString() {
-        return "Vehicle[ID:" + id + ", Color:" + color + ", Type:" + type + ", Station:" + stationId + ", Worker:" + workerId + ", Belt Position:" + beltPosition + "]";
+        return "Vehicle[ ID:" + id + ", Color:" + color + ", Type:" + type + ", Station:" + stationId + ", Worker:" + workerId + ", Belt Position:" + beltPosition + ", Store:" + store + " ]";
     }
 }

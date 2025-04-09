@@ -1,47 +1,51 @@
 package factory;
 import java.util.Random;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 class Customer implements Runnable {
-
-    // Lista de lojas disponíveis para o cliente comprar veículos
     private StoreClient[] stores;
-
-    // Identificador único do cliente
     private int customerId;
-
-    // Gerador de números aleatórios
     private Random random = new Random();
+    private List<Vehicle> buffer = new ArrayList<>();
+
+    public void addCar(Vehicle vehicle) {
+        buffer.add(vehicle);
+    }
     
-    // Construtor que recebe as lojas e o id do cliente
     public Customer(StoreClient[] stores, int customerId) {
         this.stores = stores;
         this.customerId = customerId;
     }
 
-    // Método run que define o comportamento da thread do cliente
     @Override
     public void run() {
         try {
-            // O cliente decide aleatoriamente quantos veículos ele vai comprar (entre 1 e 5)
-            int vehiclesToBuy = random.nextInt(5) + 1;
-
+            int vehiclesToBuy = random.nextInt(25) + 1;
             for (int i = 0; i < vehiclesToBuy; i++) {
-                // Escolhe aleatoriamente uma loja entre as disponíveis
                 StoreClient store = stores[random.nextInt(stores.length)];
-
-                // Solicita um veículo da loja (espera se não houver veículos no estoque)
-                Vehicle vehicle = store.getVehicle();
-
-                // Exibe no console a informação da compra
+                Vehicle vehicle = store.getVehicle(customerId);
+                addCar(vehicle);
                 System.out.println("Customer " + customerId + " bought from " + store.storeName + ": " + vehicle);
-
-                // Espera um tempo aleatório (até 5 segundos) antes da próxima compra
                 Thread.sleep(random.nextInt(5000));
             }
+            logBuffer();
         } catch (InterruptedException e) {
-            // Captura interrupções na execução da thread (como sleep ou getVehicle)
+            e.printStackTrace();
+        }
+    }
+
+    private void logBuffer() {
+        try (FileWriter fw = new FileWriter("customer_garage.log", true);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
+            out.println("Customer: " + customerId + " | Number of Cars: " + buffer.size() + " | CarsLog: " + buffer.toString());
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 }
-
